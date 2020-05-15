@@ -1,0 +1,99 @@
+---
+title: 'Peer-graded Assignment: Course Project 1'
+author: "Xi Fang"
+date: "5/13/2020"
+output: html_document
+---
+
+```{r set, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading and preprocessing the data
+```{r read data}
+activity <- read.csv("activity.csv")
+activity$date <- as.Date(activity$date)
+```
+
+## What is mean total number of steps taken per day?
+```{r question1}
+# 1. Calculate the total number of steps taken per day
+sum_day <- with(activity, tapply(steps, date,sum, na.rm = TRUE))
+## an alternative way--returns a dataframe
+steps_day <- aggregate(steps ~ date, activity, sum, na.rm= TRUE)
+
+# 2. Make a histogram of the total number of steps taken each day
+hist(sum_day, xlab = "Total steps per day", ylab = "Frequency")
+
+# 3. Calculate and report the mean and median of the total number of steps taken per day
+data.frame("mean" = mean(sum_day), "median"=median(sum_day))
+```
+* The mean of the total number of steps taken per day is “9354.23”
+* The median of the total number of steps taken per day is “10395”
+
+
+## What is the average daily activity pattern?
+```{r question2}
+# 1. Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+mean_interval <- with(activity, tapply(steps, interval, mean, na.rm = TRUE))
+plot(mean_interval,  xlab = "Interval", ylab = "Average Number of Steps", type = "l" )
+
+# 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+inter <- aggregate(steps ~ interval, activity, mean, na.rm= TRUE)
+inter[which.max(inter$steps),]
+```
+The 5-minute intercal, on acerage across all the days in the dataset, that contains the maximun number of steps is '835'.
+
+## Imputing missing values
+```{r question3}
+# 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NA)
+sum(is.na(activity))
+
+# 2. Devise a strategy for filling in all of the missing values with the mean for that interval in the dataset. 
+# 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+activity2 <- activity
+for (i in 1:nrow(activity2)) 
+{ 
+    if (is.na(activity2$steps[i])) {
+        activity2$steps[i] <- inter[which(activity2$interval[i] == inter$interval),]$steps
+    }
+    
+}
+summary(activity2)
+
+## Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
+sum_day2 <- with(activity2, tapply(steps, date,sum, na.rm = TRUE))
+hist(sum_day2, xlab = "Total steps per day", ylab = "Frequency")
+data.frame("mean" = mean(sum_day2), "median"=median(sum_day2))
+```
+* The total number of missing values in the dataset is “2304”
+* The mean of the total number of steps taken per day is “10766.19”
+* The median of the total number of steps taken per day is “10766.19”
+* After imputing the missing data, the new mean of total steps taken per day is the same as the median, and is the same as that of the old mean. The new histogram is more like a bell shape with less data at both ends of the plot.
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+```{r question4}
+# 1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+wd <- c('Monday','Tuesday', 'Wednesday','Thursday', 'Friday')
+activity2$weekday <- factor((weekdays(activity2$date) %in% wd),
+                            levels = c(FALSE, TRUE), labels = c('weekend','weekay'))
+
+# 2. Make a panel plot containing a time series plot (i.e.type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis).
+inter3 <- aggregate(steps ~ interval+weekday, activity2, mean)
+table(inter3$weekday)
+
+library(ggplot2)
+qplot(interval, steps,data = inter3, facets = weekday~.,
+      geom = "line")
+
+## alternative
+library(lattice)
+xyplot(steps~interval | factor(weekday),
+       data=inter3,
+       type="l",
+       layout = c(1,2),
+       xlab="interval",
+       ylab="number of steps")
+
+```
