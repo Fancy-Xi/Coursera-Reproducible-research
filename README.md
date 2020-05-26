@@ -1,4 +1,4 @@
-# Coursera-Reproducible-research
+# Coursera-Reproducible-research-Project 1
 
 ## Introduction
 
