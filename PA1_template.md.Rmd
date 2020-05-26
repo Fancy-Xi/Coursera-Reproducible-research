@@ -2,7 +2,9 @@
 title: 'Peer-graded Assignment: Course Project 1'
 author: "Xi Fang"
 date: "5/13/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r set, include=FALSE}
