@@ -18,7 +18,7 @@ activity$date <- as.Date(activity$date)
 ## What is mean total number of steps taken per day?
 ```{r question1}
 # 1. Calculate the total number of steps taken per day
-sum_day <- with(activity, tapply(steps, date,sum, na.rm = TRUE))
+sum_day <- with(activity, tapply(steps, date,sum, na.rm = TRUE)) 
 ## an alternative way--returns a dataframe
 steps_day <- aggregate(steps ~ date, activity, sum, na.rm= TRUE)
 
