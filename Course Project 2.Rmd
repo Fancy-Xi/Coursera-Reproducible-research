@@ -33,9 +33,10 @@ topfata <- fatatility[order(-fatatility$FATALITIES),][1:10,]
 library(ggplot2)
 g1 <- ggplot(topfata, aes(x = reorder (EVTYPE, FATALITIES), y =FATALITIES)) +
     geom_bar(stat = "identity", fill = "orange") +
-    ggtitle("Top 10 Events by Fatalities")
+    ggtitle("Top 10 Events by Fatalities") +
     labs(x="Event Types", y="Fatalities") +
     theme(axis.text = element_text(angle = 45,hjust = 1))
+g1
 ## Based on this result, tornados are the most harmful events that cuase the highest fatality in the U.S
     
 # Injuries 
@@ -44,9 +45,46 @@ dim(injuries)
 topinju <- injuries[order(-injuries$INJURIES),][1:10,]
 g2 <- ggplot(topinju, aes(x = reorder (EVTYPE, INJURIES), y =INJURIES)) +
     geom_bar(stat = "identity", fill = "blue") +
-    ggtitle("Top 10 Events by Injuries")
+    ggtitle("Top 10 Events by Injuries") +
     labs(x="Event Types", y="Injuries") +
     theme(axis.text = element_text(angle = 45,hjust = 1))
     g2
 ## Based on this result, tornados are the most harmful events that cuase the highest injuries in the U.S
 ```
+
+### Events have the greatest economic consequences?
+```{r questions 2, echo=TRUE}
+## processing
+data$PROPDMGMult <- ifelse (data$PROPDMGEXP == "K", 1000, ifelse (data$PROPDMGEXP == "M", 1000000, ifelse (data$PROPDMGEXP == "B", 1000000000, 0)))
+
+data$PROPDMGAMT <- data$PROPDMG*data$PROPDMGMult
+
+data$CROPDMGMult <- ifelse (data$CROPDMGEXP == "K", 1000, ifelse (data$CROPDMGEXP == "M", 1000000, ifelse (data$CROPDMGEXP == "B", 1000000000, 0)))
+
+data$CROPDMGAMT <- data$CROPDMG*data$CROPDMGMult
+
+data$TOTALDMGAMT <- data$PROPDMGAMT+data$CROPDMGAMT
+# properties damage
+tdamage <- aggregate(TOTALDMGAMT ~ EVTYPE, data= data, FUN = sum)
+dim(tdamage)
+toppdam <- tdamage[order(-tdamage$TOTALDMGAMT),][1:10,]
+g3 <- ggplot(toppdam, aes(x = reorder (EVTYPE, TOTALDMGAMT), y =TOTALDMGAMT)) +
+    geom_bar(stat = "identity", fill = "red") +
+    ggtitle("Top 10 Events by Properties Damage") +
+    labs(x="Event Types", y="Properties Damage") +
+    theme(axis.text = element_text(angle = 45,hjust = 1))
+    g3
+## Based on this result, floods are the most harmful events that cuase the highest economic damage in the U.S
+
+```
+## Results and Conclusions
+### question 1
+   * As shown in the figure, Tornados causes the greatest number of Fatalities and Injuries.
+   * In particular, in terms of fatalities, after Tornados, EXCESSIVE HEAT, FLASH FLOOD and HEAT are the next ones.
+   * In particular, in terms of injuries, after tornados we have TSTM WIND, FLOOD and EXCESSIVE HEAT.
+   
+### question 2
+   * Floods have the greatest economic consequences based on total dollars of property and crop damage, followed by Hurrucanes.
+
+### Conclusions
+In our analysis of weather events that cause the most adverse effect in the U.S, we found that tornados cause the most damage in the population including fatalities and injuries, while floods cause the most damage to the ecoomy in the U.S.
