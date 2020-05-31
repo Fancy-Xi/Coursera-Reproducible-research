@@ -1,0 +1,41 @@
+---
+title: "Storms and their Consequences in the United States"
+author: "Xi Fang"
+date: "5/31/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##introduction
+
+   Storms and other severe weather events can cause both public health and economic problems for communities and municipalities. Many severe events can result in fatalities, injuries, and property damage, and preventing such outcomes to the extent possible is a key concern.
+
+   This project involves exploring the U.S. National Oceanic and Atmospheric Administration's (NOAA) storm database. This database tracks characteristics of major storms and weather events in the United States, including when and where they occur, as well as estimates of any fatalities, injuries, and property damage.
+
+## Research questions
+1. Across the United States, which types of events (as indicated in the EVTYPE are most harmful with respect to population health?
+2. Across the United States, which types of events have the greatest economic consequences?
+
+## Synopsis 
+
+## Data Processing
+Answer the two research questions
+### Events are most harmful to population health?
+```{r data, echo=TRUE}
+data <- read.csv("repdata_data_StormData.csv", header = TRUE)
+fatatility <- aggregate(FATALITIES ~ EVTYPE, data= data, FUN = sum)
+dim(fatatility)
+## top 10 weather events with most fatality
+topfata <- fatatility[order(-fatatility$FATALITIES),][1:10,]
+library(ggplot2)
+g <- ggplot(topfata, aes(x = reorder (EVTYPE, FATALITIES), y =FATALITIES)) +
+    geom_bar(stat = "identity", fill = "orange") +
+    ggtitle("Top 10 Events by Fatalities")
+    labs(x="Event Types", y="Fatalities") +
+    theme(axis.text = element_text(angle = 45,hjust = 1))
+## Based on this result, tornados are the most harmful events that cuase the highest fatality in the U.S
+    
+# 
+```
