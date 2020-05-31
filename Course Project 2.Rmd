@@ -25,17 +25,28 @@ Answer the two research questions
 ### Events are most harmful to population health?
 ```{r data, echo=TRUE}
 data <- read.csv("repdata_data_StormData.csv", header = TRUE)
+# Fatalities
 fatatility <- aggregate(FATALITIES ~ EVTYPE, data= data, FUN = sum)
 dim(fatatility)
 ## top 10 weather events with most fatality
 topfata <- fatatility[order(-fatatility$FATALITIES),][1:10,]
 library(ggplot2)
-g <- ggplot(topfata, aes(x = reorder (EVTYPE, FATALITIES), y =FATALITIES)) +
+g1 <- ggplot(topfata, aes(x = reorder (EVTYPE, FATALITIES), y =FATALITIES)) +
     geom_bar(stat = "identity", fill = "orange") +
     ggtitle("Top 10 Events by Fatalities")
     labs(x="Event Types", y="Fatalities") +
     theme(axis.text = element_text(angle = 45,hjust = 1))
 ## Based on this result, tornados are the most harmful events that cuase the highest fatality in the U.S
     
-# 
+# Injuries 
+injuries <- aggregate(INJURIES ~ EVTYPE, data= data, FUN = sum)
+dim(injuries)
+topinju <- injuries[order(-injuries$INJURIES),][1:10,]
+g2 <- ggplot(topinju, aes(x = reorder (EVTYPE, INJURIES), y =INJURIES)) +
+    geom_bar(stat = "identity", fill = "blue") +
+    ggtitle("Top 10 Events by Injuries")
+    labs(x="Event Types", y="Injuries") +
+    theme(axis.text = element_text(angle = 45,hjust = 1))
+    g2
+## Based on this result, tornados are the most harmful events that cuase the highest injuries in the U.S
 ```
